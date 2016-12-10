@@ -90,5 +90,5 @@ class ClarifAI(object):
             kws = data['result']['tag']['classes']
             probs = data['result']['tag']['probs']
 
-            return list({kw for kw, p in zip(kws, probs) if p >= min_prob})
+            return list({kw.replace(" ", "") for kw, p in zip(kws, probs) if p >= min_prob})
         return []

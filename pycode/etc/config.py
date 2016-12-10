@@ -1,5 +1,5 @@
 # coding: utf-8
 
-
 CLARIFAI_APP_ID = None
 CLARIFAI_APP_SECRET = None
+HASHTAG_URL_TEMPLATE = None
