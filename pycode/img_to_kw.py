@@ -2,7 +2,6 @@
 import logging
 import os
 
-from clarifai.client import ApiError
 from clarifai.client import ApiThrottledError
 from clarifai.client import ClarifaiApi
 from PIL import Image
@@ -86,15 +85,10 @@ class ClarifAI(object):
                 logging.error(u"Something went wrong")
                 raise ApiDoesNotWorkException(u"Unexpected error")
 
-        good_kws = []
         if res[u'status_code'] == u'OK' and res[u'results'][0][u'status_code'] == u'OK':
             data = res[u'results'][0]
             kws = data['result']['tag']['classes']
             probs = data['result']['tag']['probs']
 
-            good_kws = [kw for kw, p in zip(kws, probs) if p >= min_prob]
-        return good_kws
-
-
-
-
+            return list({kw for kw, p in zip(kws, probs) if p >= min_prob})
+        return []
