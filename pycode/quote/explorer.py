@@ -54,7 +54,7 @@ class QuotesDj(object):
         return u"q::%s" % key
 
     def get_quotes(self, kws, cnt=3):
-        quotes = []
+        candidates = set()
         for kw in kws:
             key = self._get_kw_key(kw)
             quotes = self.cache.get(key)
@@ -63,6 +63,5 @@ class QuotesDj(object):
                 quotes = self.miner.get_quotes(kw)
                 self.cache.set(key, quotes)
 
-            if len(quotes) >= cnt:
-                break
-        return quotes[:cnt]
+            candidates.update(quotes)
+        return random.sample(candidates, cnt) if len(candidates) >= cnt else None

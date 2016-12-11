@@ -16,6 +16,7 @@ if __name__ == '__main__':
     # image
     img_ranker = ImgRGBHistRanker(config["IMG_DATA_DIR"])
     ranked_images = img_ranker.rank_img_in_dir("data/my_photo")
+    print ranked_images
     image_path = ranked_images[0][0]
     print image_path
 
@@ -37,5 +38,5 @@ if __name__ == '__main__':
     print u"Best top3 kw:", best_kws
     q_miner = BrainyQuoteMiner()
     q_dj = QuotesDj(q_miner, cache)
-    quotes = q_dj.get_quotes(best_kws)
+    quotes = q_dj.get_quotes(best_kws, 5)
     print quotes
