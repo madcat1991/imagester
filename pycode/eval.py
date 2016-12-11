@@ -6,6 +6,7 @@ from cache import AppCacheRedis
 from hashtag.img_to_kw import ClarifAI, ImgKeywordDj
 from hashtag.kw_to_hashtag import HashtagMiner, HashtagDj
 from image.ranker import ImgRGBHistRanker
+from quote.explorer import BrainyQuoteMiner, QuotesDj
 
 if __name__ == '__main__':
     config = Config('')
@@ -23,7 +24,6 @@ if __name__ == '__main__':
     kw_dj = ImgKeywordDj(kw_miner, cache)
     kws = kw_dj.get_keywords(image_path)
     print kws
-    print u"Best kw:", kws[0][0]
 
     # hashtags
     h_miner = HashtagMiner(config["HASHTAG_URL_TEMPLATE"])
@@ -31,3 +31,11 @@ if __name__ == '__main__':
     tags_res = h_dj.get_hashtags([k for k, _ in kws])
     print tags_res["extended"]
     print h_dj.to_instagram(tags_res["tags"])
+
+    # quotes
+    best_kws = [kw[0] for kw in kws[:3]]
+    print u"Best top3 kw:", best_kws
+    q_miner = BrainyQuoteMiner()
+    q_dj = QuotesDj(q_miner, cache)
+    quotes = q_dj.get_quotes(best_kws)
+    print quotes
