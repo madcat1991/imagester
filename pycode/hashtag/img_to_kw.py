@@ -85,10 +85,26 @@ class ClarifAI(object):
                 logging.error(u"Something went wrong")
                 raise ApiDoesNotWorkException(u"Unexpected error")
 
+        res_kws = {}
         if res[u'status_code'] == u'OK' and res[u'results'][0][u'status_code'] == u'OK':
             data = res[u'results'][0]
             kws = data['result']['tag']['classes']
             probs = data['result']['tag']['probs']
 
-            return list({kw.replace(" ", "") for kw, p in zip(kws, probs) if p >= min_prob})
-        return []
+            for kw, p in zip(kws, probs):
+                if p >= min_prob:
+                    res_kws.setdefault(kw, p)  # it might has duplicate keywords
+        return sorted(res_kws.items(), key=lambda x: x[1], reverse=True)
+
+
+class ImgKeywordDj(object):
+    def __init__(self, miner, cache):
+        self.miner = miner
+        self.cache = cache
+
+    def get_keywords(self, image_path):
+        kws = self.cache.get(image_path)
+        if kws is None:
+            kws = self.miner.get_keywords(image_path)
+            self.cache.set(image_path, kws)
+        return kws

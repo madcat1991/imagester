@@ -64,7 +64,7 @@ class HashtagDj(object):
     def get_hashtags(self, keywords):
         console = {}
         for kw in keywords:
-            key = self._get_kw_key(kw)
+            key = self._get_kw_key(kw.replace(" ", ""))
             related_tags = self.cache.get(key)
 
             if related_tags is None:
