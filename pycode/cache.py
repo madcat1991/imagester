@@ -1,6 +1,6 @@
 # coding: utf-8
+import cPickle
 
-import json
 from constants import CACHE_TTL_SEC
 
 
@@ -10,8 +10,8 @@ class AppCacheRedis(object):
 
     def get(self, key):
         obj = self.r.get(key)
-        return json.loads(obj) if obj is not None else obj
+        return cPickle.loads(obj) if obj is not None else obj
 
     def set(self, key, obj):
-        value = json.dumps(obj)
+        value = cPickle.dumps(obj, 2)
         self.r.set(key, value, CACHE_TTL_SEC)
