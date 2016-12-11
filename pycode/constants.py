@@ -7,7 +7,6 @@ MAX_TAGS_PER_KW = 20
 # originally Instagram allows 30, but this number also includes
 # users mentioned in the post
 MAX_TAGS_PER_POST = 20
-MIN_TAGS_PER_POST = 10
 
 MOST_POPULAR_TAGS = [
     u'TFLers', u'TagsForLikes', u'all_shots', u'amazing', u'awesome', u'bestoftheday',

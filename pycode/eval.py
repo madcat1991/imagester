@@ -1,10 +1,12 @@
 # coding: utf-8
 import os
+import random
 
 from flask import Config
 from redis import Redis
 
 from cache import AppCacheRedis
+from constants import TRACING_TAG, MOST_POPULAR_TAGS
 from hashtag.img_to_kw import ClarifAI, ImgKeywordDj
 from hashtag.kw_to_hashtag import HashtagMiner, HashtagDj
 from image.ranker import ImgRGBHistRanker
@@ -18,27 +20,35 @@ if __name__ == '__main__':
     # image
     img_ranker = ImgRGBHistRanker(os.path.join(config["IMG_DATA_DIR"], "hist.npy"))
     ranked_images = img_ranker.rank_img_in_dir("data/my_photo")
-    print ranked_images
     image_path = ranked_images[0][0]
-    print image_path
+    print u"Suggested image to publish:", image_path
 
     # keywords
     kw_miner = ClarifAI(config["CLARIFAI_APP_ID"], config["CLARIFAI_APP_SECRET"])
     kw_dj = ImgKeywordDj(kw_miner, cache)
     kws = kw_dj.get_keywords(image_path)
-    print kws
+    print u"Image keywords:"
+    for kw in kws:
+        print u"\t%s: %s" % kw
 
     # hashtags
     h_miner = HashtagMiner(config["HASHTAG_URL_TEMPLATE"])
     h_dj = HashtagDj(h_miner, cache)
-    tags_res = h_dj.get_hashtags([k for k, _ in kws])
-    print tags_res["extended"]
-    print h_dj.to_instagram(tags_res["tags"])
+    tags = h_dj.get_hashtags([k for k, _ in kws])
+    print u"Suggested hashtags (based on image):"
+    for tag in tags:
+        print u"\t%s: %s" % tag
+
+    # TODO hashtags based on location
+
+    print u"Suggested tracing hashtag: ", TRACING_TAG
+    print u"5 random popular tags:", random.sample(MOST_POPULAR_TAGS, 5)
 
     # quotes
-    best_kws = [kw[0] for kw in kws[:3]]
-    print u"Best top3 kw:", best_kws
     q_miner = BrainyQuoteMiner()
     q_dj = QuotesDj(q_miner, cache)
+    best_kws = [kw[0] for kw in kws[:3]]
     quotes = q_dj.get_quotes(best_kws, 5)
-    print quotes
+    print u"Sample quotes"
+    for i, (author, quote) in enumerate(quotes, start=1):
+        print u"%s. '%s' - %s" % (i, quote, author)

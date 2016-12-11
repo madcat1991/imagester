@@ -75,7 +75,7 @@ class ClarifAI(object):
                 (_B_to_kB(os.stat(image_path).st_size), _B_to_kB(self.max_bytes))
             )
 
-    def get_keywords(self, image_path, min_prob=0.9):
+    def get_keywords(self, image_path, min_prob=0.8):
         self._prepare_img(image_path)
         with open(image_path) as f:
             try:
@@ -92,8 +92,11 @@ class ClarifAI(object):
             probs = data['result']['tag']['probs']
 
             for kw, p in zip(kws, probs):
-                if p >= min_prob:
-                    res_kws.setdefault(kw.strip(), p)  # it might has duplicate keywords
+                _kw = kw.strip()
+                if p >= min_prob and (_kw not in res_kws or res_kws[_kw] < p):
+                    # it might has duplicate keywords
+                    res_kws[_kw] = p
+
         return sorted(res_kws.items(), key=lambda x: x[1], reverse=True)
 
 

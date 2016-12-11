@@ -1,10 +1,12 @@
 # coding: utf-8
-import random
 
 import requests
 
-from constants import MAX_TAGS_PER_KW, MIN_TAGS_PER_POST, MAX_TAGS_PER_POST, TRACING_TAG, \
-    MOST_POPULAR_TAGS
+from constants import MAX_TAGS_PER_KW, MAX_TAGS_PER_POST
+
+
+def f1_score(a, b):
+    return 2 * a * b / float(a + b)
 
 
 class HashtagMiner(object):
@@ -18,10 +20,9 @@ class HashtagMiner(object):
         ht_data = {}
         if data['tagExists']:
             for ht_info in data['results'][:MAX_TAGS_PER_KW]:
-                ht_data[ht_info['tag']] = {
-                    'relevance': ht_info['relevance'],
-                    'rank': ht_info['rank'],  # positively correlates with the number of posts
-                }
+                # simple f1-score
+                # rank positively correlates with the number of posts
+                ht_data[ht_info['tag']] = f1_score(ht_info['relevance'], ht_info['rank'])
         return ht_data
 
 
@@ -34,33 +35,6 @@ class HashtagDj(object):
     def _get_kw_key(key):
         return u"h::%s" % key
 
-    @staticmethod
-    def to_instagram(hashtags):
-        if isinstance(hashtags, str):
-            return u"#%s" % hashtags
-        return u" ".join([u"#%s" % tag for tag in hashtags])
-
-    def _mix(self, console):
-        result = {}
-        if len(console) >= MIN_TAGS_PER_POST:
-            sorted_console = sorted(
-                console.items(), key=lambda x: (x[1]["relevance"], x[1]["rank"])
-            )
-            tags = [x[0] for x in sorted_console[-MAX_TAGS_PER_POST:]]
-            result["extended"] = False
-        else:
-            tags = console.keys()
-            left_tags_cnt = MIN_TAGS_PER_POST - len(tags)
-            tags += random.sample(MOST_POPULAR_TAGS, left_tags_cnt)
-            # the data was extended with popular hashtags
-            result["extended"] = True
-
-        # adding our tag to trace quality
-        tags.append(TRACING_TAG)
-        random.shuffle(tags)
-        result["tags"] = tags
-        return result
-
     def get_hashtags(self, keywords):
         console = {}
         for kw in keywords:
@@ -72,11 +46,8 @@ class HashtagDj(object):
                 self.cache.set(key, related_tags)
 
             # combining data from different keywords
-            for tag, data in related_tags.iteritems():
-                if tag in console:
-                    if data['relevance'] > console[tag]['relevance']:
-                        console[tag] = data
-                else:
-                    console[tag] = data
-        return self._mix(console)
+            for tag, f1 in related_tags.iteritems():
+                if tag not in console or console[tag] < f1:
+                    console[tag] = f1
+        return sorted(console.items(), key=lambda x: x[1], reverse=True)[:MAX_TAGS_PER_POST]
 
