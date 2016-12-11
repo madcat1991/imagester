@@ -32,7 +32,7 @@ class HashtagDj(object):
 
     @staticmethod
     def _get_kw_key(key):
-        return u"kw::%s" % key
+        return u"h::%s" % key
 
     @staticmethod
     def to_instagram(hashtags):

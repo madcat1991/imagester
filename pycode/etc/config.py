@@ -5,4 +5,11 @@ CLARIFAI_APP_SECRET = None
 HASHTAG_URL_TEMPLATE = None
 
 FLICKR_API_KEY = None
-FLICKR_IMG_DIR = None
+IMG_DATA_DIR = None
+
+TWITTER_AUTH = {
+    "consumer_key": None,
+    "consumer_secret": None,
+    "access_token": None,
+    "access_token_secret": None,
+}

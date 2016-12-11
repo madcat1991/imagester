@@ -93,7 +93,7 @@ class ClarifAI(object):
 
             for kw, p in zip(kws, probs):
                 if p >= min_prob:
-                    res_kws.setdefault(kw, p)  # it might has duplicate keywords
+                    res_kws.setdefault(kw.strip(), p)  # it might has duplicate keywords
         return sorted(res_kws.items(), key=lambda x: x[1], reverse=True)
 
 

@@ -17,3 +17,6 @@ MOST_POPULAR_TAGS = [
     u'picoftheday', u'statigram', u'webstagram',
 ]
 TRACING_TAG = u'imagester'
+
+# quotes
+MIN_QUOTES_PER_KW = 5
