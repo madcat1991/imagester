@@ -1,12 +1,11 @@
 # coding: utf-8
 from flask import Config
-
-from cache import AppCacheRedis
-from image.ranker import ImgRGBHistRanker
-from img_to_kw import ClarifAI
 from redis import Redis
 
-from kw_to_hashtag import HashtagMiner, HashtagDj
+from cache import AppCacheRedis
+from hashtag.img_to_kw import ClarifAI
+from hashtag.kw_to_hashtag import HashtagMiner, HashtagDj
+from image.ranker import ImgRGBHistRanker
 
 if __name__ == '__main__':
     config = Config('')
@@ -19,6 +18,8 @@ if __name__ == '__main__':
     im_app = ClarifAI(config["CLARIFAI_APP_ID"], config["CLARIFAI_APP_SECRET"])
 
     image_path = ranked_images[0][0]
+    print image_path
+
     kws = cache.get(image_path)
     if kws is None:
         kws = im_app.get_keywords(image_path)
@@ -29,6 +30,5 @@ if __name__ == '__main__':
 
     result = dj.get_hashtags(kws)
 
-    print image_path
     print result["extended"]
     print dj.to_instagram(result["tags"])

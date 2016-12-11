@@ -4,7 +4,7 @@ import random
 import requests
 
 from constants import MAX_TAGS_PER_KW, MIN_TAGS_PER_POST, MAX_TAGS_PER_POST, TRACING_TAG, \
-    MOST_POPULAR_HASHTAGS
+    MOST_POPULAR_TAGS
 
 
 class HashtagMiner(object):
@@ -51,7 +51,7 @@ class HashtagDj(object):
         else:
             tags = console.keys()
             left_tags_cnt = MIN_TAGS_PER_POST - len(tags)
-            tags += random.sample(MOST_POPULAR_HASHTAGS, left_tags_cnt)
+            tags += random.sample(MOST_POPULAR_TAGS, left_tags_cnt)
             # the data was extended with popular hashtags
             result["extended"] = True
 

@@ -9,7 +9,7 @@ MAX_TAGS_PER_KW = 20
 MAX_TAGS_PER_POST = 20
 MIN_TAGS_PER_POST = 10
 
-MOST_POPULAR_HASHTAGS = [
+MOST_POPULAR_TAGS = [
     u'TFLers', u'TagsForLikes', u'all_shots', u'amazing', u'awesome', u'bestoftheday',
     u'cool', u'followme', u'funny', u'hot', u'igaddict', u'igers', u'instacool',
     u'instadaily', u'instafollow', u'instago', u'instagood', u'instagramers',
