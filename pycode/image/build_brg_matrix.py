@@ -22,6 +22,8 @@ import sys
 from flask import Config
 from sklearn.preprocessing import normalize
 
+from image.common import get_img_hist
+
 IMG_URL_TEMPLATE = "https://farm%(farm)s.staticflickr.com/%(server)s/%(id)s_%(secret)s_%(size)s.jpg"
 
 
@@ -72,25 +74,17 @@ def download_images(urls, dir_path, n_threads):
     logging.info(u"Images have been downloaded")
 
 
-def prepare_rgb_matrices(dir_path):
+def prepare_brg_matrix(dir_path):
     logging.info(u"Building rgb matrices")
-    colors = ("r", "g", "b")
-    matrices = {col: [] for col in colors}
+    matrix_rows = []
 
     logging.info(u"Collecting histograms")
     for path in glob.glob(os.path.join(dir_path, "*.jpg")):
-        img = cv2.imread(path)
-        for i, col in enumerate(colors):
-            hist = cv2.calcHist([img], [i], None, [256], [0, 256])
-            matrices[col].append(hist.reshape(-1))
+        matrix_rows.append(get_img_hist(path))
 
-    logging.info(u"Creating matrices and saving")
-    for color, data in matrices.iteritems():
-        m = normalize(np.array(data))
-        path = os.path.join(dir_path, "%s.npy" % color)
-        np.save(path, m)
-        logging.info(u"Saved matrix %s to %s", color, path)
-    logging.info(u"RGB matrices have been created")
+    matrix_path = os.path.join(dir_path, "hist.npy")
+    np.save(matrix_path, np.array(matrix_rows))
+    logging.info(u"Matrix has been saved to %s", matrix_path)
 
 
 def replace_files(src_dir, dest_dir):
@@ -121,7 +115,7 @@ def main():
     tmp_dir = os.path.join(img_dir, "tmp")
 
     download_images(new_urls, tmp_dir, args.n_threads)
-    prepare_rgb_matrices(tmp_dir)
+    prepare_brg_matrix(tmp_dir)
     replace_files(tmp_dir, img_dir)
 
 

@@ -1,4 +1,6 @@
 # coding: utf-8
+import os
+
 from flask import Config
 from redis import Redis
 
@@ -14,7 +16,7 @@ if __name__ == '__main__':
     cache = AppCacheRedis(Redis())
 
     # image
-    img_ranker = ImgRGBHistRanker(config["IMG_DATA_DIR"])
+    img_ranker = ImgRGBHistRanker(os.path.join(config["IMG_DATA_DIR"], "hist.npy"))
     ranked_images = img_ranker.rank_img_in_dir("data/my_photo")
     print ranked_images
     image_path = ranked_images[0][0]
