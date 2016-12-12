@@ -18,6 +18,8 @@ if __name__ == '__main__':
     config.from_pyfile("etc/local/config.py")
     cache = AppCacheRedis(Redis())
 
+    lat, lng = (46.49067, 11.33982)  # Bolzano
+
     # image
     img_ranker = ImgRGBHistRanker(os.path.join(config["IMG_DATA_DIR"], "hist.npy"))
     ranked_images = img_ranker.rank_img_in_dir("data/my_photo")
@@ -33,16 +35,19 @@ if __name__ == '__main__':
         print u"\t%s: %s" % kw
 
     # hashtags
-    h_miner = HashtagMiner(config["HASHTAG_URL_TEMPLATE"])
+    h_miner = HashtagMiner(config)
     h_dj = HashtagDj(h_miner, cache)
-    tags = h_dj.get_hashtags([k for k, _ in kws])
+    tags = h_dj.get_hashtags_by_kws([k for k, _ in kws])
     print u"Suggested hashtags (based on image):"
     for tag in tags:
         print u"\t%s: %s" % tag
 
-    # TODO hashtags based on location
+    loc_tags = h_dj.get_hashtags_by_loc(lat, lng)
+    print u"Suggested hashtags (based on location):"
+    for tag in loc_tags:
+        print u"\t%s: %s" % tag
 
-    print u"Suggested tracing hashtag:", TRACING_TAG
+    print u"Tracing hashtag:", TRACING_TAG
     print u"5 random popular tags:", random.sample(MOST_POPULAR_TAGS, 5)
 
     # quotes
