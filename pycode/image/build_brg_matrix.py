@@ -109,7 +109,7 @@ def main():
 
     new_urls = collect_image_urls(config)
 
-    img_dir = config["IMG_DATA_DIR"]
+    img_dir = config["DATA_DIR"]
     tmp_dir = os.path.join(img_dir, "tmp")
 
     download_images(new_urls, tmp_dir, args.n_threads)

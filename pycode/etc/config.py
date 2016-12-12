@@ -4,7 +4,7 @@ CLARIFAI_APP_ID = None
 CLARIFAI_APP_SECRET = None
 
 FLICKR_API_KEY = None
-IMG_DATA_DIR = None
+DATA_DIR = None
 
 TWITTER_AUTH = {
     "consumer_key": None,

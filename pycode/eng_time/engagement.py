@@ -7,8 +7,8 @@ from datetime import datetime
 
 
 class EngTimeMiner(object):
-    def __init__(self, dir_path):
-        self.eng_v = self.get_eng_v(dir_path)
+    def __init__(self, data_url, data_dir):
+        self.eng_v = self.get_eng_v(data_url, data_dir)
 
     def _get_pos(self, day, hour):
         return day * 24 + hour
@@ -16,19 +16,19 @@ class EngTimeMiner(object):
     def _get_day_and_hour(self, pos):
         return pos / 24, pos % 24
 
-    def get_eng_v(self, dir_path):
+    def get_eng_v(self, data_url, dir_path):
         today = datetime.today()
 
         data_files = glob.glob(os.path.join(dir_path, "engagement_*.csv"))
         if len(data_files) == 0:
             data_path = os.path.join(os.path.join(dir_path, today.strftime('engagement_%Y%m%d.csv')))
-            urllib.urlretrieve("http://cf.datawrapper.de/Ndpz7/2/data.csv", data_path)
+            urllib.urlretrieve(data_url, data_path)
         else:
             data_path = data_files[0]
             download_day = datetime.strptime(os.path.basename(data_path), 'engagement_%Y%m%d.csv')
             if (today - download_day).days >= 7:
                 data_path = os.path.join(os.path.join(dir_path, today.strftime('engagement_%Y%m%d.csv')))
-                urllib.urlretrieve("http://cf.datawrapper.de/Ndpz7/2/data.csv", data_path)
+                urllib.urlretrieve(data_url, data_path)
 
         eng_v = [0] * (7 * 24)
         with open(data_path, 'rU') as f:

@@ -20,7 +20,7 @@ if __name__ == '__main__':
     cache = AppCacheRedis(Redis())
 
     # image
-    img_ranker = ImgRGBHistRanker(os.path.join(config["IMG_DATA_DIR"], "hist.npy"))
+    img_ranker = ImgRGBHistRanker(os.path.join(config["DATA_DIR"], "hist.npy"))
     ranked_images = img_ranker.rank_img_in_dir("data/my_photo")
     image_path = ranked_images[0][0]
     print u"Suggested image to publish:", image_path
@@ -61,7 +61,7 @@ if __name__ == '__main__':
         print u"%s. '%s' - %s" % (i, quote, author)
 
     # time
-    t_miner = EngTimeMiner(config["IMG_DATA_DIR"])
+    t_miner = EngTimeMiner(config["ENG_DATA_URL"], config["DATA_DIR"])
     closest24, best24 = t_miner.get_eng_time()
     print u"Suggested closest time to post (in next 24h): %s, %s:00" % \
           (WEEKDAYS[closest24[0]], str(closest24[1]).zfill(2))
