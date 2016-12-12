@@ -6,11 +6,12 @@ from flask import Config
 from redis import Redis
 
 from cache import AppCacheRedis
-from constants import TRACING_TAG, MOST_POPULAR_TAGS
+from constants import TRACING_TAG, MOST_POPULAR_TAGS, WEEKDAYS
 from hashtag.img_to_kw import ClarifAI, ImgKeywordDj
 from hashtag.kw_to_hashtag import HashtagMiner, HashtagDj
 from image.ranker import ImgRGBHistRanker
 from quote.explorer import BrainyQuoteMiner, QuotesDj
+from eng_time.engagement import EngTimeMiner
 
 if __name__ == '__main__':
     config = Config('')
@@ -41,7 +42,7 @@ if __name__ == '__main__':
 
     # TODO hashtags based on location
 
-    print u"Suggested tracing hashtag: ", TRACING_TAG
+    print u"Suggested tracing hashtag:", TRACING_TAG
     print u"5 random popular tags:", random.sample(MOST_POPULAR_TAGS, 5)
 
     # quotes
@@ -52,3 +53,11 @@ if __name__ == '__main__':
     print u"Sample quotes"
     for i, (author, quote) in enumerate(quotes, start=1):
         print u"%s. '%s' - %s" % (i, quote, author)
+
+    # time
+    t_miner = EngTimeMiner(config["IMG_DATA_DIR"])
+    closest24, best24 = t_miner.get_eng_time()
+    print u"Suggested closest time to post (in next 24h): %s, %s:00" % \
+          (WEEKDAYS[closest24[0]], str(closest24[1]).zfill(2))
+    print u"Suggested best time to post (in next 24h): %s, %s:00" % \
+          (WEEKDAYS[best24[0]], str(best24[1]).zfill(2))

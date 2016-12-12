@@ -19,3 +19,5 @@ TRACING_TAG = u'imagester'
 
 # quotes
 MIN_QUOTES_PER_KW = 5
+
+WEEKDAYS = [u"Monday", u"Tuesday", u"Wednesday", u"Thursday", u"Friday", u"Saturday", u"Sunday"]
