@@ -9,6 +9,7 @@ from cache import AppCacheRedis
 from constants import TRACING_TAG, MOST_POPULAR_TAGS, WEEKDAYS
 from hashtag.img_to_kw import ClarifAI, ImgKeywordDj
 from hashtag.kw_to_hashtag import HashtagMiner, HashtagDj
+from image.loc_from_img import get_lat_lon
 from image.ranker import ImgRGBHistRanker
 from quote.explorer import BrainyQuoteMiner, QuotesDj
 from eng_time.engagement import EngTimeMiner
@@ -17,8 +18,6 @@ if __name__ == '__main__':
     config = Config('')
     config.from_pyfile("etc/local/config.py")
     cache = AppCacheRedis(Redis())
-
-    lat, lng = (46.49067, 11.33982)  # Bolzano
 
     # image
     img_ranker = ImgRGBHistRanker(os.path.join(config["IMG_DATA_DIR"], "hist.npy"))
@@ -42,10 +41,12 @@ if __name__ == '__main__':
     for tag in tags:
         print u"\t%s: %s" % tag
 
-    loc_tags = h_dj.get_hashtags_by_loc(lat, lng)
-    print u"Suggested hashtags (based on location):"
-    for tag in loc_tags:
-        print u"\t%s: %s" % tag
+    lat, lng = get_lat_lon(image_path)
+    if lat and lng:
+        loc_tags = h_dj.get_hashtags_by_loc(lat, lng)
+        print u"Suggested hashtags (based on location):"
+        for tag in loc_tags:
+            print u"\t%s: %s" % tag
 
     print u"Tracing hashtag:", TRACING_TAG
     print u"5 random popular tags:", random.sample(MOST_POPULAR_TAGS, 5)

@@ -10,7 +10,6 @@ import glob
 import logging
 import os
 import urllib
-import cv2
 from datetime import date, timedelta
 from multiprocessing.dummy import Pool
 
@@ -20,7 +19,6 @@ import shutil
 
 import sys
 from flask import Config
-from sklearn.preprocessing import normalize
 
 from image.common import get_img_hist
 
