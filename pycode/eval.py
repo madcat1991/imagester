@@ -14,6 +14,11 @@ from image.ranker import ImgRGBHistRanker
 from quote.explorer import BrainyQuoteMiner, QuotesDj
 from eng_time.engagement import EngTimeMiner
 
+
+def to_hashtags_str(tags):
+    return u" ".join([u"#%s" % x for x in tags])
+
+
 if __name__ == '__main__':
     config = Config('')
     config.from_pyfile("etc/local/config.py")
@@ -40,6 +45,7 @@ if __name__ == '__main__':
     print u"Suggested hashtags (based on image):"
     for tag in tags:
         print u"\t%s: %s" % tag
+    print to_hashtags_str([tag[0] for tag in tags])
 
     lat, lng = get_lat_lon(image_path)
     if lat and lng:
@@ -47,9 +53,12 @@ if __name__ == '__main__':
         print u"Suggested hashtags (based on location):"
         for tag in loc_tags:
             print u"\t%s: %s" % tag
+        print to_hashtags_str([tag[0] for tag in tags])
 
     print u"Tracing hashtag:", TRACING_TAG
-    print u"5 random popular tags:", random.sample(MOST_POPULAR_TAGS, 5)
+    most_popular = random.sample(MOST_POPULAR_TAGS, 5)
+    print u"5 random popular tags:", most_popular
+    print to_hashtags_str(most_popular)
 
     # quotes
     q_miner = BrainyQuoteMiner()
