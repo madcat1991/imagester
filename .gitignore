@@ -55,7 +55,7 @@ docs/_build/
 
 # PyBuilder
 target/
-local/
+pycode/etc/local/
 
 # data
 *.pkl
