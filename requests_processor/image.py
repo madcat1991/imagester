@@ -1,4 +1,5 @@
 # coding: utf-8
+
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 
@@ -83,11 +84,16 @@ def shape_image(img_path, max_shape):
         width, height = im.size
 
         # resizing
-        if min(width, height) > max_shape:
-            min_dim = min(width, height)
-            ratio = min_dim / float(max_shape)
+        if width > max_shape[0] or height > max_shape[1]:
+            ratio = max(
+                float(width) / max_shape[0],
+                float(height) / max_shape[1]
+            )
             width, height = int(width / ratio), int(height / ratio)
 
+            # saving exif
+            exif = im.info['exif']
+
             res_im = im.resize((width, height))
-            res_im.save(img_path)
+            res_im.save(img_path, exif=exif)
             res_im.close()
