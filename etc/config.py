@@ -63,10 +63,39 @@ REDIS_CONFIG = {
     'db': 0
 }
 
+CLARIFAI_KEY = "clarifai"
 INIT_CLARIFAI_KEYS = []
+
+REGAIND_KEY = "regaind"
+INIT_REGAIND_KEYS = []
 
 # app level configs
 MAX_REQUESTS_PER_USER = 5
 MAX_IMAGES_PER_REQUEST = 3
-ALLOWED_IMG_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
 IMG_UPLOAD_DIR = "/tmp"
+
+ALLOWED_IMG_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+MAX_IMG_SHAPE_FOR_PROCESSING = (1200, 1200)  # pixels
+
+# tags
+REL_TAG_URL = None
+LOC_TAG_URL = None
+MAX_TAGS_TO_MINE = 15
+MAX_KWS_TAGS = 15
+MAX_LOC_TAGS = 5
+KW_TAGS_TTL = 24 * 60 * 60  # 1 day
+LOC_TAGS_TTL = 7 * 24 * 60 * 60  # 7 days
+LNG_STEP = 0.4
+LAT_STEP = 0.1
+
+# quotes
+QUOTES_URL = None
+QUOTES_TTL = 7 * 24 * 60 * 60  # 7 days
+QUOTES_PER_KW = 5
+QUOTES_KWS_NUM = 3
+MAX_QUOTES = 5
+
+# post time
+ENG_DATA_URL = "http://cf.datawrapper.de/Ndpz7/2/data.csv"
+ENG_DATA_DIR = "/tmp/eng_data/"
