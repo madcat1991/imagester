@@ -29,6 +29,7 @@ def check_email_handler():
 
 @main.route('/upload/', methods=["POST"])
 def upload_handler():
+    #TODO limit by MAX_IMAGES_PER_REQUEST * 10MB
     email = request.form.get("email")
     email_check_res = check_email(email)
 
