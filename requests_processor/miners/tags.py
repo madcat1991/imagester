@@ -52,7 +52,9 @@ class TagsMiner(object):
             for tag, f1 in tags.iteritems():
                 if tag not in console or console[tag] < f1:
                     console[tag] = f1
-        return sorted(console.items(), key=lambda x: x[1], reverse=True)[:top]
+
+        sorted_tags = sorted(console.items(), key=lambda x: x[1], reverse=True)[:top]
+        return [tag for tag, _ in sorted_tags]
 
 
 class LocTagsMiner(object):
@@ -97,4 +99,5 @@ class LocTagsMiner(object):
 
     def get_tags(self, lat, lng, top):
         tags = self._get_tags_by_loc(lat, lng)
-        return sorted(tags.items(), key=lambda x: x[1], reverse=True)[:top]
+        sorted_tags = sorted(tags.items(), key=lambda x: x[1], reverse=True)[:top]
+        return [tag for tag, _ in sorted_tags]
