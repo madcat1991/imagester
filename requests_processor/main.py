@@ -11,6 +11,7 @@ import logging
 import os
 import sys
 from multiprocessing import cpu_count
+from multiprocessing.pool import ThreadPool
 
 import psycopg2
 from flask import Config
@@ -117,7 +118,8 @@ def get_times():
     return miner.get_best_times()
 
 
-def process(img_dir):
+def process(params):
+    req_id, img_dir = params
     # suggesting image
     best_img = get_best_image(img_dir)
     if best_img is not None:
@@ -137,9 +139,10 @@ def process(img_dir):
             quotes = get_quotes(keywords)
 
             # time to publish
+            # TODO remember that time is in the servers timezone
             time_closest, time_in_24h = get_times()
             if tags:
-                return best_img, tags, loc_tags, quotes, time_closest, time_in_24h
+                return req_id, best_img, tags, loc_tags, quotes, time_closest, time_in_24h
     return None
 
 
@@ -150,36 +153,36 @@ def main():
         suggestion_reqs = cur.fetchall()
     logging.info(u"Number of requests to process: %s", len(suggestion_reqs))
 
-    processed = {}
-    for req_id, img_dir in suggestion_reqs:
-        res = process(img_dir)
+    pool = ThreadPool()
+    processed = []
+    for res in pool.map(process, suggestion_reqs):
         if res is not None:
-            processed[req_id] = res
+            processed.append(res)
     logging.info(u"Number of processed requests: %s", len(processed))
 
     logging.info(u"Inserting to DB")
-    # with conn.cursor() as cur:
-    #     for req_id, data in processed.iteritems():
-    #         best_img, tags, loc_tags, quotes, b24h, closest = data
-    #         sql = """
-    #             INSERT processed_request (
-    #                 request_id,
-    #                 img_path,
-    #                 tags,
-    #                 loc_tags,
-    #                 quotes,
-    #                 time_in_24h,
-    #                 time_closest
-    #             )
-    #             VALUES (%s, %s, %s, %s, %s, %s, %s)
-    #         """
-    #         cur.execute(sql, (req_id, best_img, tags, loc_tags, quotes, b24h, closest))
-    #     cur.execute("""
-    #         UPDATE request
-    #         SET is_processed=TRUE
-    #         WHERE id IN (SELECT request_id FROM processed_request)
-    #     """)
-    #     conn.commit()
+    with conn.cursor() as cur:
+        for res in processed:
+            req_id, best_img, tags, loc_tags, quotes, time_closest, time_in_24h = res
+            sql = """
+                INSERT INTO processed_request (
+                    request_id,
+                    img_path,
+                    tags,
+                    loc_tags,
+                    quotes,
+                    time_in_24h,
+                    time_closest
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            cur.execute(sql, (req_id, best_img, tags, loc_tags, quotes, time_closest, time_in_24h))
+
+        cur.execute("""
+            UPDATE request SET is_processed=TRUE
+            WHERE id IN (SELECT request_id FROM processed_request)
+        """)
+        conn.commit()
     logging.info(u"Finish")
 
 if __name__ == '__main__':
