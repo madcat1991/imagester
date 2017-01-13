@@ -92,7 +92,6 @@ def get_loc_tags(lat, lng):
     tagger = LocTagsMiner(
         r,
         config["LOC_TAG_URL"],
-        config["MAX_TAGS_TO_MINE"],
         config["KW_TAGS_TTL"],
         config["LAT_STEP"],
         config["LNG_STEP"],

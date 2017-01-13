@@ -58,10 +58,9 @@ class TagsMiner(object):
 
 
 class LocTagsMiner(object):
-    def __init__(self, r, url, max_tags_to_mine, ttl_sec, lat_step, lng_step):
+    def __init__(self, r, url, ttl_sec, lat_step, lng_step):
         self.r = r
         self.url = url
-        self.max_tags_to_mine = max_tags_to_mine
         self.ttl_sec = ttl_sec
 
         self.key_template = u"loc::%s"
