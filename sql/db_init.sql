@@ -3,7 +3,7 @@
 -- $ createdb -e -E UTF8 -O imagester imagester
 
 -- table of requests
-DROP TABLE IF EXISTS request;
+DROP TABLE IF EXISTS request CASCADE;
 CREATE TABLE request
 (
   id SERIAL PRIMARY KEY,
@@ -24,10 +24,12 @@ CREATE TABLE processed_request
   id SERIAL PRIMARY KEY,
   request_id INT NOT NULL REFERENCES request (id),
   img_path TEXT NOT NULL,
-  hashtags TEXT[] NOT NULL,
+  tags TEXT[] NOT NULL,
+  loc_tags TEXT[] NOT NULL,
   quotes TEXT[] NOT NULL,
   time_in_24h TIMESTAMP NOT NULL,
-  time_closest TIMESTAMP NOT NULL
+  time_closest TIMESTAMP NOT NULL,
+  dt TIMESTAMP NOT NULL DEFAULT now()
 )
 WITH (
   OIDS=FALSE
