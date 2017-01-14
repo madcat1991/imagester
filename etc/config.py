@@ -54,7 +54,7 @@ PSQL_CONFIG = {
     "user": "imagester",
     "password": None,
     "minconn": 1,
-    "maxconn": 20
+    "maxconn": 10
 }
 
 REDIS_CONFIG = {
