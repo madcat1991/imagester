@@ -87,8 +87,8 @@ MAX_KWS_TAGS = 20
 MAX_LOC_TAGS = 7
 KW_TAGS_TTL = 24 * 60 * 60  # 1 day
 LOC_TAGS_TTL = 7 * 24 * 60 * 60  # 7 days
-LNG_STEP = 0.4
-LAT_STEP = 0.1
+LNG_STEP = 0.5
+LAT_STEP = 0.5
 
 # quotes
 QUOTES_URL = None

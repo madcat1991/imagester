@@ -78,45 +78,6 @@ def get_keywords(img_path):
     return None
 
 
-def get_tags(keywords):
-    tagger = TagsMiner(
-        r,
-        config["REL_TAG_URL"],
-        config["MAX_TAGS_TO_MINE"],
-        config["KW_TAGS_TTL"]
-    )
-    return tagger.get_tags(keywords, config["MAX_KWS_TAGS"])
-
-
-def get_loc_tags(lat, lng):
-    tagger = LocTagsMiner(
-        r,
-        config["LOC_TAG_URL"],
-        config["KW_TAGS_TTL"],
-        config["LAT_STEP"],
-        config["LNG_STEP"],
-    )
-    return tagger.get_tags(lat, lng, config["MAX_LOC_TAGS"])
-
-
-def get_quotes(keywords):
-    quotter = QuotesMiner(
-        r,
-        config["QUOTES_URL"],
-        config["QUOTES_PER_KW"],
-        config["QUOTES_TTL"]
-    )
-    return quotter.get_quotes(keywords[:config["QUOTES_KWS_NUM"]], config["MAX_QUOTES"])
-
-
-def get_times():
-    miner = PostTimeMiner(
-        config["ENG_DATA_URL"],
-        config["ENG_DATA_DIR"],
-    )
-    return miner.get_best_times()
-
-
 def process(params):
     req_id, img_dir = params
     # suggesting image
@@ -127,19 +88,22 @@ def process(params):
         if keywords is not None and keywords:
             keywords = [kw for kw, _ in keywords]
             # tags by keywords
-            tags = get_tags(keywords)
+            tags = kw_tagger.get_tags(keywords, config["MAX_KWS_TAGS"])
 
             # identifying the image's location
             lat, lng = get_lat_lon(best_img)
             # tags by loc
-            loc_tags = get_loc_tags(lat, lng) if lat and lng else []
+            if lat and lng:
+                loc_tags = loc_tagger.get_tags(lat, lng, config["MAX_LOC_TAGS"])
+            else:
+                loc_tags = []
 
             # quotes
-            quotes = get_quotes(keywords)
+            quotes = quotter.get_quotes(keywords[:config["QUOTES_KWS_NUM"]], config["MAX_QUOTES"])
 
             # time to publish
-            # TODO remember that time is in the servers timezone
-            time_closest, time_in_24h = get_times()
+            # TODO use user offset
+            time_closest, time_in_24h = time_miner.get_best_times()
             if tags:
                 return req_id, best_img, tags, loc_tags, quotes, time_closest, time_in_24h
     return None
@@ -208,10 +172,22 @@ if __name__ == '__main__':
     db_conf = config['PSQL_CONFIG']
     conn = psycopg2.connect(
         host=db_conf['host'], port=db_conf['port'],
-        database=db_conf['database'], user=db_conf['user']
+        database=db_conf['database'], user=db_conf['user'],
+        password=db_conf['password']
     )
 
     # redis
     r = Redis(**config['REDIS_CONFIG'])
+    # static miners
+    kw_tagger = TagsMiner(
+        r, config["REL_TAG_URL"], config["MAX_TAGS_TO_MINE"], config["KW_TAGS_TTL"]
+    )
+    loc_tagger = LocTagsMiner(
+        r, config["LOC_TAG_URL"], config["KW_TAGS_TTL"], config["LAT_STEP"], config["LNG_STEP"],
+    )
+    quotter = QuotesMiner(
+        r, config["QUOTES_URL"], config["QUOTES_PER_KW"], config["QUOTES_TTL"]
+    )
+    time_miner = PostTimeMiner(config["ENG_DATA_URL"], config["ENG_DATA_DIR"])
 
     main()
