@@ -72,6 +72,7 @@ INIT_REGAIND_KEYS = []
 # app level configs
 MAX_REQUESTS_PER_USER = 5
 MAX_IMAGES_PER_REQUEST = 3
+DEFAULT_MAX_IMG_BYTES = 10 * 1024 * 1024  # 10MB
 
 IMG_UPLOAD_DIR = "/tmp"
 
@@ -99,3 +100,6 @@ MAX_QUOTES = 5
 # post time
 ENG_DATA_URL = "http://cf.datawrapper.de/Ndpz7/2/data.csv"
 ENG_DATA_DIR = "/tmp/eng_data/"
+
+# flask
+MAX_CONTENT_LENGTH = MAX_IMAGES_PER_REQUEST * DEFAULT_MAX_IMG_BYTES

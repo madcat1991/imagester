@@ -2,6 +2,7 @@ clarifai==2.0.14
 Flask==0.12
 jupyter==1.0.0
 lxml==3.7.2
+Pillow==4.0.0
 psycopg2==2.6.2
 pydns==2.3.6
 redis==2.10.5

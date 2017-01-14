@@ -67,7 +67,7 @@ class APIApp(Flask):
         app_id, app_secret = json.loads(self.redis.lrange("clarifai", 0, 0)[0])
         api = ClarifaiApi(app_id, app_secret)
         info = api.get_info()
-        self.max_image_bytes = info[u'max_image_bytes']
+        self.max_image_bytes = info.get(u'max_image_bytes', self.config['DEFAULT_MAX_IMG_BYTES'])
 
     def init(self, config_path):
         self._load_config(config_path)
