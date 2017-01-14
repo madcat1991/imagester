@@ -65,7 +65,7 @@ def generate_folder_to_upload(email):
     return os.path.join(current_app.config['IMG_UPLOAD_DIR'], dir_name)
 
 
-def prepare_request(email, images):
+def prepare_request(email, utc_offset_minutes, images):
     # add email to redis if does not exist
     with current_app.redis.pipeline() as pipe:
         pipe.set(email, current_app.config["MAX_REQUESTS_PER_USER"], nx=True)
@@ -83,8 +83,11 @@ def prepare_request(email, images):
     # saving data to DB
     with get_db_cursor(commit=True) as cur:
         # id, email, img_dir, processed, dt
-        sql = "INSERT INTO request (email, img_dir) VALUES (%s, %s)"
-        cur.execute(sql, (email, img_dir))
+        sql = """
+            INSERT INTO request (email, utc_offset_minutes, img_dir)
+            VALUES (%s, %s, %s)
+        """
+        cur.execute(sql, (email, utc_offset_minutes, img_dir))
 
     # reducing the number of attempts
     attempts_left = current_app.redis.decr(email)

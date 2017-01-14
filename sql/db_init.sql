@@ -8,9 +8,9 @@ CREATE TABLE request
 (
   id SERIAL PRIMARY KEY,
   email TEXT NOT NULL,
+  utc_offset_minutes INT NOT NULL,
   img_dir TEXT NOT NULL,
   dt TIMESTAMP NOT NULL DEFAULT now(),
-  is_processed BOOL NOT NULL DEFAULT FALSE,
   is_sent BOOL NOT NULL DEFAULT FALSE
 )
 WITH (

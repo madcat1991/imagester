@@ -29,16 +29,17 @@ def check_email_handler():
 
 @main.route('/upload/', methods=["POST"])
 def upload_handler():
-    #TODO limit by MAX_IMAGES_PER_REQUEST * 10MB
     email = request.form.get("email")
     email_check_res = check_email(email)
+
+    utc_offset_minutes = request.form.get("offset_minutes", type=int, default=0)
 
     if email_check_res["is_ok"]:
         images = request.files.getlist("images")[: current_app.config["MAX_IMAGES_PER_REQUEST"]]
         images_check_res = check_images(images)
 
         if images_check_res["is_ok"]:
-            attempts_left = prepare_request(email, images)
+            attempts_left = prepare_request(email, utc_offset_minutes, images)
         else:
             raise ArgErrorException(
                 "images", images_check_res["msg"], filename=images_check_res["filename"]
