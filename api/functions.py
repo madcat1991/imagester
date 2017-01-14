@@ -60,9 +60,8 @@ def check_images(images):
     return {"is_ok": True}
 
 
-def generate_folder_to_upload(email):
-    dir_name = hashlib.md5("%s_%s" % (email, time.time())).hexdigest()
-    return os.path.join(current_app.config['IMG_UPLOAD_DIR'], dir_name)
+def generate_dir_name(email):
+    return hashlib.md5("%s_%s" % (email, time.time())).hexdigest()
 
 
 def prepare_request(email, utc_offset_minutes, images):
@@ -73,16 +72,16 @@ def prepare_request(email, utc_offset_minutes, images):
         pipe.execute()
 
     # get path to save images
-    img_dir = generate_folder_to_upload(email)
-    os.makedirs(img_dir)
+    img_dir = generate_dir_name(email)
+    img_dir_path = os.path.join(current_app.config['IMG_UPLOAD_DIR'], img_dir)
+    os.makedirs(img_dir_path)
 
     # saving images to folder
     for img in images:
-        img.save(os.path.join(img_dir, img.filename))
+        img.save(os.path.join(img_dir_path, img.filename))
 
     # saving data to DB
     with get_db_cursor(commit=True) as cur:
-        # id, email, img_dir, processed, dt
         sql = """
             INSERT INTO request (email, utc_offset_minutes, img_dir)
             VALUES (%s, %s, %s)

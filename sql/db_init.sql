@@ -24,7 +24,7 @@ CREATE TABLE processed_request
 (
   id SERIAL PRIMARY KEY,
   request_id INT NOT NULL REFERENCES request (id),
-  img TEXT NOT NULL,
+  img_path TEXT NOT NULL,
   tags TEXT[] NOT NULL,
   loc_tags TEXT[] NOT NULL,
   quotes TEXT[] NOT NULL,

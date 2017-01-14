@@ -27,11 +27,11 @@ from requests_processor.miners.best_image import BestImageMiner
 from requests_processor.miners.tags import TagsMiner, LocTagsMiner
 
 
-def get_best_image(img_dir):
+def get_best_image(img_dir_path):
     best_img = None
     best_metric = -1
 
-    for img_path in glob.glob(os.path.join(img_dir, "*.*")):
+    for img_path in glob.glob(os.path.join(img_dir_path, "*.*")):
         shape_image(img_path, config["MAX_IMG_SHAPE_FOR_PROCESSING"])
 
         metric = 0
@@ -80,8 +80,10 @@ def get_keywords(img_path):
 
 def process(params):
     req_id, utc_offset_minutes, img_dir = params
+    img_dir_path = os.path.join(config['IMG_UPLOAD_DIR'], img_dir)
+
     # suggesting image
-    best_img_path = get_best_image(img_dir)
+    best_img_path = get_best_image(img_dir_path)
     if best_img_path is not None:
         # identifying the image's keywords
         keywords = get_keywords(best_img_path)
@@ -104,8 +106,8 @@ def process(params):
                 # publishing time
                 user_pt_closest, user_pt_in_24h = time_miner.get_best_times(utc_offset_minutes)
 
-                img_name = os.path.basename(best_img_path)
-                return req_id, img_name, tags, loc_tags, quotes, user_pt_closest, user_pt_in_24h
+                rel_img_path = os.path.relpath(best_img_path, config['IMG_UPLOAD_DIR'])
+                return req_id, rel_img_path, tags, loc_tags, quotes, user_pt_closest, user_pt_in_24h
     return None
 
 
@@ -130,11 +132,11 @@ def main():
     logging.info(u"Inserting to DB")
     with conn.cursor() as cur:
         for res in processed:
-            req_id, img_name, tags, loc_tags, quotes, pt_closest, pt_in_24h = res
+            req_id, img_path, tags, loc_tags, quotes, pt_closest, pt_in_24h = res
             sql = """
                 INSERT INTO processed_request (
                     request_id,
-                    img,
+                    img_path,
                     tags,
                     loc_tags,
                     quotes,
@@ -143,7 +145,7 @@ def main():
                 )
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
-            cur.execute(sql, (req_id, img_name, tags, loc_tags, quotes, pt_closest, pt_in_24h))
+            cur.execute(sql, (req_id, img_path, tags, loc_tags, quotes, pt_closest, pt_in_24h))
         conn.commit()
     logging.info(u"Finish")
 
