@@ -79,39 +79,43 @@ def get_keywords(img_path):
 
 
 def process(params):
-    req_id, img_dir = params
+    req_id, utc_offset_minutes, img_dir = params
     # suggesting image
-    best_img = get_best_image(img_dir)
-    if best_img is not None:
+    best_img_path = get_best_image(img_dir)
+    if best_img_path is not None:
         # identifying the image's keywords
-        keywords = get_keywords(best_img)
+        keywords = get_keywords(best_img_path)
         if keywords is not None and keywords:
             keywords = [kw for kw, _ in keywords]
             # tags by keywords
             tags = kw_tagger.get_tags(keywords, config["MAX_KWS_TAGS"])
-
-            # identifying the image's location
-            lat, lng = get_lat_lon(best_img)
-            # tags by loc
-            if lat and lng:
-                loc_tags = loc_tagger.get_tags(lat, lng, config["MAX_LOC_TAGS"])
-            else:
-                loc_tags = []
-
-            # quotes
-            quotes = quotter.get_quotes(keywords[:config["QUOTES_KWS_NUM"]], config["MAX_QUOTES"])
-
-            # time to publish
-            # TODO use user offset
-            time_closest, time_in_24h = time_miner.get_best_times()
             if tags:
-                return req_id, best_img, tags, loc_tags, quotes, time_closest, time_in_24h
+                # identifying the image's location
+                lat, lng = get_lat_lon(best_img_path)
+                # tags by loc
+                if lat and lng:
+                    loc_tags = loc_tagger.get_tags(lat, lng, config["MAX_LOC_TAGS"])
+                else:
+                    loc_tags = []
+
+                # quotes
+                quotes = quotter.get_quotes(keywords[:config["QUOTES_KWS_NUM"]], config["MAX_QUOTES"])
+
+                # publishing time
+                user_pt_closest, user_pt_in_24h = time_miner.get_best_times(utc_offset_minutes)
+
+                img_name = os.path.basename(best_img_path)
+                return req_id, img_name, tags, loc_tags, quotes, user_pt_closest, user_pt_in_24h
     return None
 
 
 def main():
     with conn.cursor() as cur:
-        sql = 'SELECT id, img_dir FROM request WHERE is_processed=FALSE ORDER BY dt LIMIT %s'
+        sql = """
+            SELECT id, utc_offset_minutes, img_dir FROM request
+            WHERE id NOT IN (SELECT request_id FROM processed_request)
+            ORDER BY dt LIMIT %s
+        """
         cur.execute(sql, (args.batch_size,))
         suggestion_reqs = cur.fetchall()
     logging.info(u"Number of requests to process: %s", len(suggestion_reqs))
@@ -126,25 +130,20 @@ def main():
     logging.info(u"Inserting to DB")
     with conn.cursor() as cur:
         for res in processed:
-            req_id, best_img, tags, loc_tags, quotes, time_closest, time_in_24h = res
+            req_id, img_name, tags, loc_tags, quotes, pt_closest, pt_in_24h = res
             sql = """
                 INSERT INTO processed_request (
                     request_id,
-                    img_path,
+                    img,
                     tags,
                     loc_tags,
                     quotes,
-                    time_in_24h,
-                    time_closest
+                    user_pt_closest,
+                    user_pt_in_24h
                 )
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
-            cur.execute(sql, (req_id, best_img, tags, loc_tags, quotes, time_closest, time_in_24h))
-
-        cur.execute("""
-            UPDATE request SET is_processed=TRUE
-            WHERE id IN (SELECT request_id FROM processed_request)
-        """)
+            cur.execute(sql, (req_id, img_name, tags, loc_tags, quotes, pt_closest, pt_in_24h))
         conn.commit()
     logging.info(u"Finish")
 

@@ -24,12 +24,12 @@ CREATE TABLE processed_request
 (
   id SERIAL PRIMARY KEY,
   request_id INT NOT NULL REFERENCES request (id),
-  img_path TEXT NOT NULL,
+  img TEXT NOT NULL,
   tags TEXT[] NOT NULL,
   loc_tags TEXT[] NOT NULL,
   quotes TEXT[] NOT NULL,
-  time_in_24h TIMESTAMP NOT NULL,
-  time_closest TIMESTAMP NOT NULL,
+  user_pt_closest TIMESTAMP NOT NULL,
+  user_pt_in_24h TIMESTAMP NOT NULL,
   dt TIMESTAMP NOT NULL DEFAULT now()
 )
 WITH (

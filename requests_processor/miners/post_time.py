@@ -58,9 +58,9 @@ class PostTimeMiner(object):
                         engagement_vector[pos] = float(row[i].replace("%", ''))
         return engagement_vector
 
-    def get_best_times(self):
-        dt = datetime.now()
-        first_pos = self._get_pos(dt.weekday(), dt.hour)
+    def get_best_times(self, utc_offset_minutes):
+        user_dt = datetime.utcnow() - timedelta(minutes=utc_offset_minutes)
+        first_pos = self._get_pos(user_dt.weekday(), user_dt.hour)
         last_pos = (first_pos + 24) % len(self.engagement_per_hour)
 
         if first_pos < last_pos:
@@ -91,7 +91,10 @@ class PostTimeMiner(object):
             # update best
             best, best_delta = last, delta
 
-        current_hour = datetime(dt.year, dt.month, dt.day, dt.hour)
-        time_closest = current_hour + timedelta(hours=closest)
-        time_in_24h = current_hour + timedelta(hours=best)
-        return time_closest, time_in_24h
+        user_current_hour = datetime(
+            user_dt.year, user_dt.month, user_dt.day, user_dt.hour
+        )
+        # publishing time for a user
+        user_pt_closest = user_current_hour + timedelta(hours=closest)
+        user_pt_in_24h = user_current_hour + timedelta(hours=best)
+        return user_pt_closest, user_pt_in_24h
