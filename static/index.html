@@ -36,7 +36,7 @@
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
                 </button>
-                <a class="navbar-brand" href="#page-top">Start Bootstrap</a>
+                <a class="navbar-brand" href="#page-top">Start Bootstrap2</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -115,49 +115,74 @@
                     <h2> Demo </h2>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-md-4 col-md-offset-4 floating-label-form-group controls"  style="border-bottom: none ">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control"
+                        placeholder="Email Address"
+                        id="email"
+                        style="background: white"
+                        required data-validation-required-message="Please enter your email address.">
+                    <p class="help-block text-danger"></p>
+
+                </div>
+            </div>
+            <div class="row">
                 <form class="form-horizontal">
+        
                     <div class="form-group">
-                        <label class="control-label col-sm-2" for="email">Email:</label>
-                        <input type="email" id="email" 
-                            placeholder="Enter email">
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="imageupload col-md-3">
-                                <div class="file-tab">
-                                    <label class="btn btn-default btn-file btn-lg">
-                                        <span ></span>
-                                        <input type="file" name="image-file_1" id="image_1">
+                        <div class="row" style="margin-left: 140px">
+                            <div class="imageupload col-md-3 col-md-offset-1">
+                                <div class="file-tab" id="file-tab-1">
+                                    <label class="btn btn-default btn-file no_border"
+                                            style="border: none">
+                                        <img class="preview_img" src="img/large_plus.png" id="image_1" />
+                                        <input type="file" name="image-file_1"  >
                                     </label>
-                                    <button type="button" class="btn btn-default btn-lg">Remove</button>
+                                    <button class="btn btn-danger btn-lg remove_btn glyphicon glyphicon-remove" 
+                                        onclick="return remove_btn_handler(1)"
+                                        style="vertical-align: top;">
+                                    </button>
                                 </div>
                             </div>
-                            <div class="imageupload col-md-3">
-                                <div class="file-tab">
-                                    <label class="btn btn-default btn-file btn-lg">
-                                        <span></span>
-                                        <input type="file" name="image-file_2" id="image_2">
+                            <div class="imageupload col-md-3" >
+                                <div class="file-tab" id="file-tab-2">
+                                    <label class="btn btn-default btn-file no_border"
+                                            style="border: none">
+                                        <img class="preview_img" src="img/large_plus.png" id="image_2" />
+                                        <input type="file" name="image-file_2"  >
                                     </label>
-                                    <button type="button" class="btn btn-default btn-lg">Remove</button>
+                                    <button class="btn btn-danger btn-lg remove_btn glyphicon glyphicon-remove" 
+                                        onclick="return remove_btn_handler(2)"
+                                        style="vertical-align: top;">
+                                    </button>
                                 </div>
                             </div>
-                            <div class="imageupload col-md-3">
-                                <div class="file-tab">
-                                    <label class="btn btn-default btn-file btn-lg">
-                                        <span></span>
-                                        <input type="file" name="image-file_3" id="image_3">
+                            <div class="imageupload col-md-3" >
+                                <div class="file-tab" id="file-tab-3">
+                                    <label class="btn btn-default btn-file no_border"
+                                            style="border: none">
+                                        <img class="preview_img" src="img/large_plus.png" id="image_3" />
+                                        <input type="file" name="image-file_3"  >
                                     </label>
-                                    <button type="button" class="btn btn-default btn-lg">Remove</button>
+                                    <button class="btn btn-danger btn-lg remove_btn glyphicon glyphicon-remove" 
+                                        onclick="return remove_btn_handler(3)"
+                                        style="vertical-align: top;">
+                                    </button>
                                 </div>
                             </div>
                         </div>
                         
                     </div>
-                    <button type="submit" value="" class="btn btn-primary disabled"
-                     id="suggest_btn" disabled >
-                        Suggest
-                    </button>
                 </form>
+            </div>
+            <div class="row text-center">
+                <button class="btn btn-primary disabled text-center btn-lg"
+                        id="suggest_btn" disabled onclick="return suggest()" >
+                    Suggest
+                </button>
+            </div>
         </div>
     </section>
 
@@ -344,6 +369,41 @@
 
     var $imageupload = $('.imageupload');
     $imageupload.imageupload();
+
+    function remove_btn_handler(input_idx) {
+        var n = "#file-tab-" + input_idx;
+        var img_plus_src = 'img/large_plus.png'
+
+        var img = $(n).find('img')[0]
+        $(img).attr('src', img_plus_src);
+
+        var remove_btn  = $(n).find('.remove_btn')[0];
+        $(remove_btn).hide();
+
+        return false;
+    }
+
+    function suggest() {
+        // get all the data;
+        
+        var email = $('#email')[0];
+        var email = $(email).val();
+
+        var img1 = $("#image_1")[0];
+        var img2 = $("#image_2")[0];
+        var img3  = $("#image_3")[0];
+
+        var img_data1 = $(img1).attr('src');
+        var img_data2 = $(img2).attr('src');
+        var img_data3 = $(img3).attr('src');
+
+        $.post('/#', {
+            'email': email,
+            'images': [img_data1, img_data2, img_data3]
+        });
+
+        return false;
+    }
             
     </script>
 

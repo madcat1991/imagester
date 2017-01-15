@@ -49,18 +49,14 @@ if (typeof jQuery === 'undefined') {
         var $imageupload = this;
         var $fileTab = $imageupload.find('.file-tab');
         var $browseFileButton = $fileTab.find('input[type="file"]');
-        var $removeFileButton = $fileTab.find('.btn:eq(1)');
+        var $removeFileButton = $fileTab.find('.remove_btn');
 
-        // Do a complete reset.
         resetFileTab($fileTab);
-        // showFileTab($fileTab);
-
 
         $browseFileButton.off();
         $removeFileButton.off();
 
         $browseFileButton.on('change', function() {
-            console.log('browseFileButton::change');
             $(this).blur();
             submitImageFile($fileTab);
         });
@@ -114,13 +110,21 @@ if (typeof jQuery === 'undefined') {
     }
 
     function resetFileTab($fileTab) {
-        console.log('Reset File tab')
+
         $fileTab.find('.alert').remove();
-        $fileTab.find('img').remove();
-        $fileTab.find('.btn span').text('');
-        $fileTab.find('.btn span').addClass('glyphicon glyphicon-plus');
-        $fileTab.find('.btn:eq(1)').hide();
+
         $fileTab.find('input').val('');
+
+        // check how many images there uploaded and if 0
+        // disable suggest button
+        var $images = $('#demo').find('img');
+        var image_count = $images.length;
+
+        if (image_count === 0 ) {
+            var $suggestButton = $('#suggest_btn');
+            $suggestButton.prop('disabled', true);
+            $suggestButton.addClass('disabled');
+        }
     }
 
     function submitImageFile($fileTab) {
@@ -129,30 +133,38 @@ if (typeof jQuery === 'undefined') {
         var $fileInput = $browseFileButton.find('input');
         
         $fileTab.find('.alert').remove();
-        $fileTab.find('img').remove();
-        $browseFileButton.find('span').text('Browse');
-        $removeFileButton.hide();
 
         // Check if file was uploaded.
         if (!($fileInput[0].files && $fileInput[0].files[0])) {
             return;
         }
 
-        $browseFileButton.prop('disabled', true);
         
         var file = $fileInput[0].files[0];
 
         isValidImageFile(file, function(isValid, message) {
             if (isValid) {
+
+                // Enable suggest buttong
+                var $suggestButton = $('#suggest_btn');
+                $suggestButton.prop('disabled', false);
+                $suggestButton.removeClass('disabled');
+
+                // Enable next 
+
                 var fileReader = new FileReader();
 
                 fileReader.onload = function(e) {
                     // Show thumbnail and remove button.
-                    $fileTab.prepend(getImageThumbnailHtml(e.target.result));
-                    var $bt = $browseFileButton.find('span');
-                    $bt.removeClass('glyphicon-plus');
-                    $bt.text('Change');
-                    $removeFileButton.css('display', 'inline-block');
+
+                    var img = $fileTab.find('.preview_img')[0];
+                    var $img = $(img);
+                    $img.attr('src', e.target.result)
+                    $img.show()
+
+                    var remove_btn = $fileTab.find('.remove_btn')[0]
+                    $(remove_btn).show();
+
                 };
 
                 fileReader.onerror = function() {
