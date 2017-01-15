@@ -96,5 +96,5 @@ def shape_image(img_path, max_shape):
             exif = im.info['exif']
 
             res_im = im.resize((width, height), LANCZOS)
-            res_im.save(img_path, exif=exif, quality=0.9)
+            res_im.save(img_path, exif=exif, quality=90)
             res_im.close()
