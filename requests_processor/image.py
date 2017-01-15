@@ -2,6 +2,7 @@
 
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
+from PIL.Image import LANCZOS
 
 
 def _get_exif_data(image):
@@ -94,6 +95,6 @@ def shape_image(img_path, max_shape):
             # saving exif
             exif = im.info['exif']
 
-            res_im = im.resize((width, height))
+            res_im = im.resize((width, height), LANCZOS)
             res_im.save(img_path, exif=exif, quality=0.9)
             res_im.close()
