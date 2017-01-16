@@ -6,7 +6,9 @@ from api.app import APIApp
 from api.blueprints.main import main
 
 
-def get_app(config_path):
+def get_app(config_path=None):
+    config_path = config_path or os.getenv('CONFIG')
+
     api_app = APIApp(__name__)
     api_app.init(config_path)
     api_app.setup_error_handlers()
