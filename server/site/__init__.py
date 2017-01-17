@@ -13,6 +13,11 @@ def root():
     return site_bp.send_static_file('index.html')
 
 
+@site_bp.route('/favicon.ico')
+def send_favicon():
+    return site_bp.send_static_file('favicon.ico')
+
+
 @site_bp.route('/css/<path:path>')
 def send_css(path):
     return site_bp.send_static_file("css/%s" % path)
