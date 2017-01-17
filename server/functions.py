@@ -49,8 +49,8 @@ def check_images(images):
             return {
                 "is_ok": False,
                 "filename": img.filename,
-                "msg": 'The file "%s" has an unsupported extension. '
-                       'The service supports only images with the following extensions: %s.' %
+                "msg": 'The file "%s" has an unsupported file type. '
+                       'The service only supports the following file types: %s.' %
                        (img.filename, ", ".join(allowed_exts))
             }
 
@@ -60,8 +60,8 @@ def check_images(images):
             return {
                 "is_ok": False,
                 "filename": img.filename,
-                "msg": 'The file "%s" exceeds the maximum image size. '
-                       'The service supports only images with size less than %sMB.' %
+                "msg": 'The file "%s" exceeds the maximum file size. '
+                       'The service only supports images less than %sMB.' %
                        (img.filename, current_app.max_image_bytes / 1024 / 1024)
             }
 
