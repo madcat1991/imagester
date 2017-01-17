@@ -92,9 +92,11 @@ def shape_image(img_path, max_shape):
             )
             width, height = int(width / ratio), int(height / ratio)
 
-            # saving exif
-            exif = im.info['exif']
+            # saving params
+            kwargs = {"quality": 90}
+            if 'exif' in im.info:
+                kwargs['exif'] = im.info['exif']
 
             res_im = im.resize((width, height), LANCZOS)
-            res_im.save(img_path, exif=exif, quality=90)
+            res_im.save(img_path, **kwargs)
             res_im.close()

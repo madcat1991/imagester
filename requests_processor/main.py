@@ -92,13 +92,15 @@ def process(params):
             # tags by keywords
             tags = kw_tagger.get_tags(keywords, config["MAX_KWS_TAGS"])
             if tags:
-                # identifying the image's location
-                lat, lng = get_lat_lon(best_img_path)
-                # tags by loc
-                if lat and lng:
-                    loc_tags = loc_tagger.get_tags(lat, lng, config["MAX_LOC_TAGS"])
-                else:
-                    loc_tags = []
+                loc_tags = []
+
+                # identifying the image's location if it is possible
+                _, best_img_ext = os.path.splitext(best_img_path)
+                if best_img_ext.lower() in ('.jpg', '.jpeg'):
+                    lat, lng = get_lat_lon(best_img_path)
+                    # tags by loc
+                    if lat and lng:
+                        loc_tags = loc_tagger.get_tags(lat, lng, config["MAX_LOC_TAGS"])
 
                 # quotes
                 quotes = quotter.get_quotes(keywords[:config["QUOTES_KWS_NUM"]], config["MAX_QUOTES"])
