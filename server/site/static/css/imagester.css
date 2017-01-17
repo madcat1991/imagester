@@ -43,16 +43,16 @@ img.preview {
 }
 
 .btn-imagester{
-    color:#18BC9C;
+    color:#9674c7;
     font-size:20px;
-    border:2px solid #18BC9C;
+    border:2px solid #9674c7;
     background:0 0;
     transition:all .3s ease-in-out;
-    margin-top:15px
+    margin-top:15px;
 }
 
 .btn-imagester.active,.btn-imagester:active,.btn-imagester:focus,.btn-imagester:hover{
     color:#fff;
-    background:#18BC9C;
-    border:2px solid #18BC9C
+    background:#9674c7;
+    border:2px solid #9674c7;
 }
