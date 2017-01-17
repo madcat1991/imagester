@@ -38,7 +38,7 @@ LOGGING = {
         'root': {
             'handlers': ['basic'],
         },
-        'api': {
+        'server': {
             'handlers': ['debug_stdout'],
             'level': 'INFO',
             'propagate': True,

@@ -1,0 +1,58 @@
+.navbar-brand.lobster {
+    font-family: Lobster, Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    text-transform: none;
+    font-size: 2em;
+}
+span.name.lobster {
+    font-family: Lobster, Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    text-transform: none;
+}
+body {
+    font-size: 18px;
+}
+
+label.bordered {
+    /*border: none;*/
+    width: 100%;
+    border: 4px dashed gainsboro;
+}
+
+.btn.full-width {
+    width: 100%;
+    margin-top: 10px;
+    background-color: #f98699;
+    font-size: 20px;
+    color: white;
+}
+
+img.preview {
+    margin: 0px auto;
+}
+
+.imageupload .alert{
+    margin-top: 10px;
+    padding: 8px;
+}
+
+.email .alert{
+    margin-top: 10px;
+}
+
+.email {
+    margin: 20px;
+}
+
+.btn-imagester{
+    color:#18BC9C;
+    font-size:20px;
+    border:2px solid #18BC9C;
+    background:0 0;
+    transition:all .3s ease-in-out;
+    margin-top:15px
+}
+
+.btn-imagester.active,.btn-imagester:active,.btn-imagester:focus,.btn-imagester:hover{
+    color:#fff;
+    background:#18BC9C;
+    border:2px solid #18BC9C
+}
