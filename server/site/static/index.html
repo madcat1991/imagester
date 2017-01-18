@@ -314,6 +314,16 @@
                 formData.append("offset_minutes", new Date().getTimezoneOffset());
                 var row_container = $(this).parent();
 
+                var wait_msg = "Please wait...";
+                if ($(row_container).find('.alert').length !== 0) {
+                    $(row_container)
+                        .find('.alert')
+                        .replaceWith(getAlertHtml(wait_msg, 'alert-info'));
+                } else {
+                    $(row_container)
+                        .prepend(getAlertHtml(wait_msg, 'alert-info'));
+                }
+
                 $.ajax({
                     url: '/api/upload/',
                     type: 'POST',
@@ -345,6 +355,19 @@
                                         'alert-success'
                                     )
                                 );
+                        }
+                    },
+                    error: function (data) {
+                        console.log(data);
+
+                        var error_msg = "An error occurred, please contact Imagester";
+                        if ($(row_container).find('.alert').length !== 0) {
+                            $(row_container)
+                                .find('.alert')
+                                .replaceWith(getAlertHtml(error_msg, 'alert-danger'));
+                        } else {
+                            $(row_container)
+                                .prepend(getAlertHtml(error_msg, 'alert-danger'));
                         }
                     },
 
