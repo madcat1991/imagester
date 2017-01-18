@@ -24,7 +24,7 @@ class KeywordsMiner(ClarifaiApi):
                 (hour_usage[u'consumed_percentage'], month_usage[u'consumed_percentage'])
             )
 
-    def get_keywords(self, img_path, min_prob=0.9):
+    def get_keywords(self, img_path, min_prob=0.85):
         with open(img_path) as f:
             try:
                 res = self.tag((f, "img"))
