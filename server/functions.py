@@ -75,7 +75,7 @@ def generate_dir_name(email):
 
 
 def generate_img_name(img_name):
-    name, ext = os.path.extsep(img_name)
+    name, ext = os.path.splitext(img_name)
     return hashlib.md5(name).hexdigest() + ext
 
 
