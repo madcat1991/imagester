@@ -74,6 +74,11 @@ def generate_dir_name(email):
     return hashlib.md5("%s_%s" % (email, time.time())).hexdigest()
 
 
+def generate_img_name(img_name):
+    name, ext = os.path.extsep(img_name)
+    return hashlib.md5(name).hexdigest() + ext
+
+
 def prepare_request(email, utc_offset_minutes, images):
     # add email to redis if does not exist
     with current_app.redis.pipeline() as pipe:
@@ -88,7 +93,7 @@ def prepare_request(email, utc_offset_minutes, images):
 
     # saving images to folder
     for img in images:
-        img.save(os.path.join(img_dir_path, img.filename))
+        img.save(os.path.join(img_dir_path, generate_img_name(img.filename)))
 
     # saving data to DB
     with get_db_cursor(commit=True) as cur:
