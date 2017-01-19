@@ -314,7 +314,7 @@
                 formData.append("offset_minutes", new Date().getTimezoneOffset());
                 var row_container = $(this).parent();
 
-                var wait_msg = "Uploading images. Please wait...";
+                var wait_msg = "Uploading images. This may take some time. Please wait.";
                 if ($(row_container).find('.alert').length !== 0) {
                     $(row_container)
                         .find('.alert')
