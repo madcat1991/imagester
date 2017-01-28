@@ -18,7 +18,8 @@ class PostTimeMiner(object):
         return day * 24 + hour
 
     def _download_data(self, url, name):
-        os.makedirs(self.data_dir)
+        if not os.path.exists(self.data_dir):
+            os.makedirs(self.data_dir)
         try:
             data_path = os.path.join(self.data_dir, name)
             urllib.urlretrieve(url, data_path)
