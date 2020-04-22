@@ -1,5 +1,5 @@
 clarifai==2.0.14
-Flask==0.12
+Flask==1.0
 jupyter==1.0.0
 lxml==3.7.2
 Pillow==4.0.0
